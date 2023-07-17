@@ -1,41 +1,30 @@
 pipeline {
-  environment {
-    registry = "interviewdot/cicd-demo"
-    registryCredential = 'docker-hub-credentials'
-    dockerImage = ''
-  }
   agent any
+  environment {
+       DOCKERHUB_CREDENTIALS = credentials('docker-hub-sankar')
+  }
   stages {
-    stage('Cloning Git') {
-      steps {
-        git 'https://github.com/net-vinothkumar/devops-cicd-demo.git'
-      }
-    }
     stage('Building image') {
       steps{
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
-        }
+          sh "docker build -t sankar0812/cicd-demo:$BUILD_NUMBER
       }
     }
-    stage('Push Image') {
+    stage('login to dockerhub'){
       steps{
-        script {
-          /* Finally, we'll push the image with two tags:
-                   * First, the incremental build number from Jenkins
-                   * Second, the 'latest' tag.
-                   * Pushing multiple tags is cheap, as all the layers are reused. */
-          docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-              dockerImage.push("${env.BUILD_NUMBER}")
-              dockerImage.push("latest")
-          }
-        }
+          sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --pasword-stdin"
       }
     }
-    stage('Deploy to K8S'){
-        steps{
-            sh 'kubectl apply -f deployment.yml'
+    stage('push images'){
+      steps{
+        sh "docker push sankar0812/cicd-demo:$BUILD_NUMBER"
+      }
+    }
+}
+post{
+       always{
+         sh "docker logout"
        }
     }
-  }
 }
+
+  
