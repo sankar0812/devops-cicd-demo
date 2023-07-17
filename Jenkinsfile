@@ -6,7 +6,7 @@ pipeline {
   stages {
     stage('Building image') {
       steps{
-          sh "docker build -t sankar0812/cicd-demo:$BUILD_NUMBER
+          sh "docker build -t sankar0812/cicd-demo:$BUILD_NUMBER ."
       }
     }
     stage('login to dockerhub'){
