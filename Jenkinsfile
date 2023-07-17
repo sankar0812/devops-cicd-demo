@@ -7,7 +7,7 @@ pipeline {
   stages {
     stage('compile image'){
       steps{
-        sh "mvn clean install package"
+        sh "mvn clean install"
       }
     }
     stage('Building image') {
