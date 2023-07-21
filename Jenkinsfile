@@ -5,9 +5,9 @@ pipeline {
        PATH =  "/opt/apache-maven-3.9.2/bin:$PATH"
   }
   stages {
-    stage('compile image'){
+    stage('scm checkout'){
       steps{
-        sh "mvn clean install"
+      git 'https://github.com/sankar0812/devops-cicd-demo.git'
       }
     }
     stage('Building image') {
